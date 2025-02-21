@@ -328,13 +328,7 @@ const SaveOptionsMenu = () => {
 
   return (
     <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
-      >
-        <Save className="w-4 h-4" />
-        Save
-      </button>
+     
       
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-lg border border-gray-700 z-10">
@@ -410,7 +404,15 @@ const FilterBuilder = () => {
             <button className="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded">
               Cancel
             </button>
-            <SaveOptionsMenu />
+            <button
+              className="w-full px-4 py-2 text-left text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+              onClick={() => {
+                // Handle save option
+                console.log(groups)
+              }}
+            >
+              SAVE
+            </button>
           </div>
         </div>
 
