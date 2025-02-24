@@ -170,7 +170,7 @@ const FilterBuilder = () => {
       >
         {getTypeIcon(column.type)}
         <span>{column.name}</span>
-        <span className="text-xs text-gray-500 ml-auto">{column.shortCode}</span>
+        <span className="text-xs text-gray-500 ml-auto">{column.type}</span>
       </div>
     );
   };
@@ -283,15 +283,6 @@ const FilterBuilder = () => {
       }
     };
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Deletes a nested group within a group based on the provided groupId.
- * Updates the parent group with the remaining groups after deletion.
- *
- * @param {number} groupId - The ID of the group to be deleted.
- */
-
-/******  a490ce9b-5960-4130-bb8e-9d7252ad5485  *******/
     const handleNestedGroupDelete = (groupId) => {
       if (group.groups) {
         const updatedGroups = group.groups.filter(g => g.id !== groupId);
@@ -431,27 +422,17 @@ const FilterBuilder = () => {
           {/* Short Code Field */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              Short Code
+              Short Code : <b >{column?.shortCode || ''}</b>
             </label>
-            <input
-              type="text"
-              value={column?.shortCode || ''}
-              disabled
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-            />
+          
           </div>
   
           {/* Data Type Field */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">
-              Data Type
+              Data Type : <b >{selectedCondition.columnType.toUpperCase()}</b>
             </label>
-            <input
-              type="text"
-              value={selectedCondition.columnType.toUpperCase()}
-              disabled
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-            />
+           
           </div>
   
           {/* Operator Field */}
@@ -576,7 +557,7 @@ const FilterBuilder = () => {
           </div>
 
           {/* Editor Panel */}
-          <div className="col-span-3">
+          <div className="col-span-3" style={{"height": "100%"}}>
             <EditorPanel />
           </div>
         </div>
