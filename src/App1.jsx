@@ -3,7 +3,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Plus, X, ChevronDown, ChevronRight, Grip, Calendar, List, Search } from 'lucide-react';
 import { operators, availableColumns } from './constants';
-
+import './FilterBuilder.scss';
 const FilterBuilder = () => {
   // State
   const [groups, setGroups] = useState([
@@ -148,49 +148,46 @@ const FilterBuilder = () => {
         isDragging: monitor.isDragging(),
       }),
     });
-
+  
     const getTypeIcon = (type) => {
       switch (type) {
         case 'datetime':
-          return <Calendar className="w-4 h-4" />;
+          return <Calendar className="column-icon" />;
         case 'number':
-          return <List className="w-4 h-4" />;
+          return <List className="column-icon" />;
         default:
-          return <Grip className="w-4 h-4" />;
+          return <Grip className="column-icon" />;
       }
     };
-
+  
     return (
       <div
         ref={drag}
         onClick={() => onClick(column)}
-        className={`flex items-center gap-2 p-2 text-gray-300 hover:bg-gray-700 cursor-move rounded ${
-          isDragging ? 'opacity-50' : 'opacity-100'
-        } ${isSelected ? 'bg-gray-700' : ''}`}
+        className={`column ${isDragging ? 'dragging' : ''} ${isSelected ? 'selected' : ''}`}
       >
         {getTypeIcon(column.type)}
         <span>{column.name}</span>
-        <span className="text-xs text-gray-500 ml-auto">{column.shortCode}</span>
+        <span className="column-shortcode">{column.shortCode}</span>
       </div>
     );
   };
+  
 
   // Condition Component
   const Condition = ({ condition, onDelete, isSelected, onClick }) => {
     return (
       <div 
-        className={`flex items-center gap-4 p-3 rounded border ${
-          isSelected ? 'border-blue-500 bg-gray-800' : 'border-gray-700 bg-gray-700'
-        } cursor-pointer`}
+        className={`condition ${isSelected ? 'selected' : ''}`}
         onClick={() => onClick(condition)}
       >
-        <span className="text-gray-300">{condition.column}</span>
-        <span className="text-gray-400">|</span>
-        <span className="text-gray-300">{condition.operator}</span>
+        <span>{condition.column}</span>
+        <span className="separator">|</span>
+        <span>{condition.operator}</span>
         {condition.value && (
           <>
-            <span className="text-gray-400">|</span>
-            <span className="text-gray-300">{condition.value}</span>
+            <span className="separator">|</span>
+            <span>{condition.value}</span>
           </>
         )}
         <button
@@ -198,13 +195,14 @@ const FilterBuilder = () => {
             e.stopPropagation();
             onDelete(condition.id);
           }}
-          className="text-gray-400 hover:text-red-400 ml-auto"
+          className="delete-button"
         >
-          <X className="w-4 h-4" />
+          <X className="icon" />
         </button>
       </div>
     );
   };
+  
 
   // Group Component
   const Group = ({ 
@@ -219,14 +217,9 @@ const FilterBuilder = () => {
     const [{ isOver, canDrop }, drop] = useDrop({
       accept: 'COLUMN',
       drop: (item, monitor) => {
-        if (monitor.didDrop()) {
-          return;
-        }
-
-        if (!monitor.isOver({ shallow: true })) {
-          return;
-        }
-
+        if (monitor.didDrop()) return;
+        if (!monitor.isOver({ shallow: true })) return;
+  
         onUpdate(group.id, {
           ...group,
           conditions: [
@@ -240,7 +233,7 @@ const FilterBuilder = () => {
             },
           ],
         });
-
+  
         return { handled: true };
       },
       collect: (monitor) => ({
@@ -248,32 +241,31 @@ const FilterBuilder = () => {
         canDrop: monitor.canDrop(),
       }),
     });
-
+  
     const dropRef = React.useRef(null);
     const dropWithRef = (el) => {
       dropRef.current = el;
       drop(el);
     };
-
+  
     const [isExpanded, setIsExpanded] = useState(true);
-
+  
     const handleAddNestedGroup = () => {
-        if (depth === 0) {
-            const newGroup = {
-                id: Date.now(),
-                operator: 'AND',
-                conditions: [],
-                groups: []
-              };
-              
-              onUpdate(group.id, {
-                ...group,
-                groups: [...(group.groups || []), newGroup]
-              });
-        }
-      
+      if (depth === 0) {
+        const newGroup = {
+          id: Date.now(),
+          operator: 'AND',
+          conditions: [],
+          groups: []
+        };
+        
+        onUpdate(group.id, {
+          ...group,
+          groups: [...(group.groups || []), newGroup]
+        });
+      }
     };
-
+  
     const handleNestedGroupUpdate = (groupId, updatedGroup) => {
       if (group.groups) {
         const updatedGroups = group.groups.map(g => 
@@ -282,74 +274,47 @@ const FilterBuilder = () => {
         onUpdate(group.id, { ...group, groups: updatedGroups });
       }
     };
-
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Deletes a nested group within a group based on the provided groupId.
- * Updates the parent group with the remaining groups after deletion.
- *
- * @param {number} groupId - The ID of the group to be deleted.
- */
-
-/******  a490ce9b-5960-4130-bb8e-9d7252ad5485  *******/
+  
     const handleNestedGroupDelete = (groupId) => {
       if (group.groups) {
         const updatedGroups = group.groups.filter(g => g.id !== groupId);
         onUpdate(group.id, { ...group, groups: updatedGroups });
       }
     };
-    console.log(depth)
+  
     return (
       <div
         ref={dropWithRef}
-        className={`p-4 rounded border ${
-          isOver && canDrop ? 'border-blue-500 bg-gray-800' : 'border-gray-700 bg-gray-800'
-        } my-2`}
+        className={`group-container ${isOver && canDrop ? 'droppable' : ''}`}
         style={{ marginLeft: `${depth * 20}px` }}
       >
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-gray-400 hover:text-gray-300"
-            >
-              {isExpanded ? (
-                <ChevronDown className="w-4 h-4" />
-              ) : (
-                <ChevronRight className="w-4 h-4" />
-              )}
+        <div className="group-header">
+          <div className="group-controls">
+            <button onClick={() => setIsExpanded(!isExpanded)} className="group-button">
+              {isExpanded ? <ChevronDown className="icon" /> : <ChevronRight className="icon" />}
             </button>
             <select
               value={group.operator}
-              onChange={(e) =>
-                onUpdate(group.id, { ...group, operator: e.target.value })
-              }
-              className="bg-gray-700 text-gray-300 rounded px-2 py-1 border border-gray-600"
+              onChange={(e) => onUpdate(group.id, { ...group, operator: e.target.value })}
+              className="group-dropdown"
             >
               <option value="AND">AND</option>
               <option value="OR">OR</option>
             </select>
           </div>
-          <div className="flex items-center gap-2">
-          {depth === 0 && (
- <button
-              onClick={handleAddNestedGroup}
-              className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm"
-              disabled={depth > 1}
-            >
-              <Plus className="w-3 h-3" />
-               GROUP
-            </button> )}
-            <button
-              onClick={() => onDelete(group.id)}
-              className="text-gray-400 hover:text-red-400"
-            >
-              <X className="w-4 h-4" />
+          <div className="group-controls">
+            {depth === 0 && (
+              <button onClick={handleAddNestedGroup} className="group-button">
+                <Plus className="icon" /> GROUP
+              </button>
+            )}
+            <button onClick={() => onDelete(group.id)} className="group-button delete-button">
+              <X className="icon" />
             </button>
           </div>
         </div>
         {isExpanded && (
-          <div className="space-y-2">
+          <div className="nested-group">
             {group.conditions.map((condition) => (
               <Condition
                 key={condition.id}
@@ -377,11 +342,7 @@ const FilterBuilder = () => {
               />
             ))}
             {group.conditions.length === 0 && (!group.groups || group.groups.length === 0) && (
-              <div
-                className={`p-3 rounded border border-dashed ${
-                  isOver && canDrop ? 'border-blue-500' : 'border-gray-600'
-                } text-gray-400 text-center`}
-              >
+              <div className={`empty-drop-zone ${isOver && canDrop ? 'active' : ''}`}>
                 Drop columns here to add conditions
               </div>
             )}
@@ -390,9 +351,9 @@ const FilterBuilder = () => {
       </div>
     );
   };
-
+  
   // Editor Panel Component
-  const EditorPanel = () => {
+  const EditorPanel = ({ selectedCondition, setSelectedCondition, updateCondition, validateField }) => {
     if (!selectedCondition) return null;
   
     const column = availableColumns.find(col => col.name === selectedCondition.column);
@@ -416,84 +377,41 @@ const FilterBuilder = () => {
     };
   
     return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-200">{selectedCondition.column}</h3>
-          <button 
-            onClick={() => setSelectedCondition(null)} 
-            className="text-gray-400 hover:text-gray-300"
-          >
-            <X className="w-4 h-4" />
+      <div className="editor-panel">
+        <div className="editor-header">
+          <h3>{selectedCondition.column}</h3>
+          <button onClick={() => setSelectedCondition(null)} className="close-button">
+            <X className="icon" />
           </button>
         </div>
   
-        <div className="space-y-4">
-          {/* Short Code Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Short Code
-            </label>
-            <input
-              type="text"
-              value={column?.shortCode || ''}
-              disabled
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-            />
-          </div>
-  
-          {/* Data Type Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Data Type
-            </label>
-            <input
-              type="text"
-              value={selectedCondition.columnType.toUpperCase()}
-              disabled
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-            />
-          </div>
-  
-          {/* Operator Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Operator
-            </label>
-            <select
-              value={operator}
-              onChange={(e) => setOperator(e.target.value)}
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-            >
-              {columnOperators.map(op => (
-                <option key={op.value} value={op.value}>{op.label}</option>
-              ))}
-            </select>
-          </div>
-  
-          {/* Value Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Value
-            </label>
-            <input
-              type="text"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              className="bg-gray-700 text-gray-300 rounded px-3 py-2 w-full border border-gray-600"
-              placeholder="Enter value"
-            />
-          </div>
-  
-          {/* Save Button */}
-          <div className="flex justify-end mt-6">
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Save Changes
-            </button>
-          </div>
+        <div className="form-group">
+          <label>Short Code</label>
+          <input type="text" value={column?.shortCode || ''} disabled />
         </div>
+  
+        <div className="form-group">
+          <label>Data Type</label>
+          <input type="text" value={selectedCondition.columnType.toUpperCase()} disabled />
+        </div>
+  
+        <div className="form-group">
+          <label>Operator</label>
+          <select value={operator} onChange={(e) => setOperator(e.target.value)}>
+            {columnOperators.map(op => (
+              <option key={op.value} value={op.value}>{op.label}</option>
+            ))}
+          </select>
+        </div>
+  
+        <div className="form-group">
+          <label>Value</label>
+          <input type="text" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Enter value" />
+        </div>
+  
+        <button onClick={handleSave} className="save-button">
+          Save Changes
+        </button>
       </div>
     );
   };
@@ -501,18 +419,15 @@ const FilterBuilder = () => {
   
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-100">Add Filters</h1>
-          <div className="flex gap-4">
-            <button className="px-4 py-2 text-gray-300 hover:bg-gray-700 rounded">
-              Cancel
-            </button>
+    <div className="page-container">
+      <div className="page-content">
+        {/* Header */}
+        <div className="page-header">
+          <h1>Add Filters</h1>
+          <div className="button-group">
+            <button className="button">Cancel</button>
             <button
-              className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 ${
-                !isDirty && 'opacity-50 cursor-not-allowed'
-              }`}
+              className={`button save-button ${!isDirty ? 'disabled' : ''}`}
               onClick={handleSave}
               disabled={!isDirty}
             >
@@ -520,22 +435,20 @@ const FilterBuilder = () => {
             </button>
           </div>
         </div>
-
-        <div className="grid grid-cols-12 gap-6">
+  
+        {/* Layout Grid */}
+        <div className="layout-grid">
           {/* Columns Panel */}
-          <div className="col-span-3 bg-gray-800 rounded-lg p-4">
-            <div className="relative mb-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search columns..."
-                  className="w-full bg-gray-700 text-gray-300 rounded pl-9 pr-3 py-2 border border-gray-600"
-                  onChange={onSearch}
-                />
-                <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
-              </div>
+          <div className="panel column-panel">
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="Search columns..."
+                onChange={onSearch}
+              />
+              <Search className="search-icon" />
             </div>
-            <div className="space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto">
+            <div className="columns-list">
               {filteredColumns.map((column) => (
                 <Column 
                   key={column.id} 
@@ -546,22 +459,16 @@ const FilterBuilder = () => {
               ))}
             </div>
           </div>
-
+  
           {/* Filter Builder Panel */}
-          <div className="col-span-6 bg-gray-800 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-200">
-                Workflow Criteria
-              </h2>
-              <button
-                onClick={handleAddGroup}
-                className="flex items-center gap-2 text-blue-400 hover:text-blue-300"
-              >
-                <Plus className="w-4 h-4" />
-                GROUP
+          <div className="panel filter-builder-panel">
+            <div className="filter-header">
+              <h2>Workflow Criteria</h2>
+              <button onClick={handleAddGroup} className="add-group-button">
+                <Plus className="icon" /> GROUP
               </button>
             </div>
-            <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+            <div className="filter-list">
               {groups.map((group) => (
                 <Group
                   key={group.id}
@@ -574,15 +481,16 @@ const FilterBuilder = () => {
               ))}
             </div>
           </div>
-
+  
           {/* Editor Panel */}
-          <div className="col-span-3">
+          <div className="panel editor-panel">
             <EditorPanel />
           </div>
         </div>
       </div>
     </div>
   );
+  
 };
 
 const App = () => (

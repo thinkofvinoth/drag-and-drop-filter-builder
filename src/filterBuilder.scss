@@ -1,0 +1,526 @@
+// Color Variables
+$bg-dark: #1a1a1a;
+$bg-panel: #2d2d2d;
+$bg-input: #3d3d3d;
+$bg-group: #333;
+$bg-hover: #444;
+$text-light: #d1d1d1;
+$text-dark: #888;
+$border-color: #555;
+$button-bg: #007bff;
+$button-hover: #0056b3;
+$button-danger: red;
+$button-danger-hover: darkred;
+
+// General Layout
+.container {
+  min-height: 100vh;
+  background-color: $bg-dark;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  width: 100%;
+}
+
+// Grid Layout
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; // Left (Columns) - Center (Filter Builder) - Right (Editor)
+  gap: 16px;
+}
+
+// Panels
+.panel {
+  background-color: $bg-panel;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+// Column Panel
+.column-panel {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+// Filter Builder Panel
+.filter-builder-panel {
+  min-height: 400px;
+}
+
+// Editor Panel
+.editor-panel {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+// Inputs
+.input {
+  width: 100%;
+  background-color: $bg-input;
+  color: $text-light;
+  border-radius: 4px;
+  padding: 8px;
+  border: 1px solid $border-color;
+  outline: none;
+}
+
+// Buttons
+.button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: $button-bg;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  margin-right: 8px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $button-hover;
+  }
+}
+
+.button-disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
+.button-danger {
+  background-color: $button-danger;
+
+  &:hover {
+    background-color: $button-danger-hover;
+  }
+}
+
+// Groups
+.group {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: $bg-group;
+  margin-bottom: 8px;
+  border: 1px solid $border-color;
+}
+
+// Conditions
+.condition {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: $bg-hover;
+  color: $text-light;
+  cursor: pointer;
+}
+
+// Dropdown
+.dropdown {
+  background-color: $bg-input;
+  color: $text-light;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid $border-color;
+}
+
+// Column Component
+.column {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: $text-light;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: grab;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $bg-hover;
+  }
+
+  &.dragging {
+    opacity: 0.5;
+  }
+
+  &.selected {
+    background-color: #555;
+  }
+}
+
+.column-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.column-shortcode {
+  font-size: 12px;
+  color: $text-dark;
+  margin-left: auto;
+}
+
+// Flex Helpers
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+// Condition Component Styles
+.condition {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: #444;
+    border: 1px solid #555;
+    color: #d1d1d1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border 0.2s ease;
+  
+    &:hover {
+      background-color: #555;
+    }
+  
+    &.selected {
+      border-color: #3b82f6; // Blue-500 in Tailwind
+      background-color: #333;
+    }
+  
+    span {
+      color: #d1d1d1;
+    }
+  
+    .separator {
+      color: #888;
+    }
+  
+    .delete-button {
+      color: #888;
+      margin-left: auto;
+      transition: color 0.2s ease;
+  
+      &:hover {
+        color: red;
+      }
+    }
+  
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  // Group Component Styles
+.group-container {
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #333;
+    margin-bottom: 8px;
+    border: 1px solid #555;
+    transition: border 0.2s ease, background-color 0.2s ease;
+  
+    &.droppable {
+      border-color: #3b82f6; // Blue-500 in Tailwind
+      background-color: #444;
+    }
+  }
+  
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .group-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .group-button {
+    background-color: transparent;
+    color: #bbb;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  
+    &:hover {
+      color: #fff;
+    }
+  }
+  
+  .group-dropdown {
+    background-color: #3d3d3d;
+    color: #d1d1d1;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    cursor: pointer;
+  }
+  
+  .nested-group {
+    margin-left: 20px;
+  }
+  
+  .delete-button {
+    color: red;
+    transition: color 0.2s ease;
+  
+    &:hover {
+      color: darkred;
+    }
+  }
+  
+  .empty-drop-zone {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px dashed #666;
+    text-align: center;
+    color: #bbb;
+    transition: border 0.2s ease;
+  
+    &.active {
+      border-color: #3b82f6; // Blue-500
+    }
+  }
+  // Editor Panel Styles
+.editor-panel {
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+  
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #d1d1d1;
+      }
+  
+      .close-button {
+        color: #888;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+  
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+  
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+  
+      label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #bbb;
+      }
+  
+      input,
+      select {
+        width: 100%;
+        background-color: #3d3d3d;
+        color: #d1d1d1;
+        border-radius: 4px;
+        padding: 8px;
+        border: 1px solid #555;
+        outline: none;
+      }
+    }
+  
+    .save-button {
+      align-self: flex-end;
+      padding: 8px 12px;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  // Variables
+$bg-dark: #1a1a1a;
+$bg-panel: #2d2d2d;
+$bg-input: #3d3d3d;
+$bg-hover: #444;
+$text-light: #d1d1d1;
+$text-muted: #888;
+$border-color: #555;
+$button-bg: #007bff;
+$button-hover: #0056b3;
+
+// Page Layout
+.page-container {
+  min-height: 100vh;
+  background-color: $bg-dark;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+}
+
+.page-content {
+  max-width: 1200px;
+  width: 100%;
+}
+
+// Header
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: $text-light;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 12px;
+
+    .button {
+      padding: 8px 12px;
+      border-radius: 4px;
+      background-color: transparent;
+      color: $text-light;
+      border: 1px solid $border-color;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: $bg-hover;
+      }
+    }
+
+    .save-button {
+      background-color: $button-bg;
+      color: #fff;
+      border: none;
+
+      &:hover {
+        background-color: $button-hover;
+      }
+
+      &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// Grid Layout
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 24px;
+}
+
+// Panels
+.panel {
+  background-color: $bg-panel;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+// Columns Panel
+.column-panel {
+  max-height: 400px;
+  overflow-y: auto;
+
+  .search-box {
+    position: relative;
+    margin-bottom: 16px;
+
+    input {
+      width: 100%;
+      background-color: $bg-input;
+      color: $text-light;
+      border-radius: 4px;
+      padding: 8px 12px;
+      border: 1px solid $border-color;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $text-muted;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Filter Builder Panel
+.filter-builder-panel {
+  min-height: 400px;
+
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: $text-light;
+    }
+
+    .add-group-button {
+      background: none;
+      color: #3b82f6;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #60a5fa;
+      }
+    }
+  }
+}
+
+// Editor Panel
+.editor-panel {
+  min-height: 400px;
+}
